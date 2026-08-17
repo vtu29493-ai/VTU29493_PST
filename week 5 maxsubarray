@@ -1,0 +1,40 @@
+class Solution {
+    private static class Segment {
+        int totalSum;
+        int maxLeftSum;
+        int maxRightSum;
+        int maxSubSum;
+
+        Segment(int totalSum, int maxLeftSum, int maxRightSum, int maxSubSum) {
+            this.totalSum = totalSum;
+            this.maxLeftSum = maxLeftSum;
+            this.maxRightSum = maxRightSum;
+            this.maxSubSum = maxSubSum;
+        }
+    }
+
+    public int maxSubArray(int[] nums) {
+        return helper(nums, 0, nums.length - 1).maxSubSum;
+    }
+
+    private Segment helper(int[] nums, int left, int right) {
+        if (left == right) {
+            return new Segment(nums[left], nums[left], nums[left], nums[left]);
+        }
+
+        int mid = left + (right - left) / 2;
+        Segment L = helper(nums, left, mid);
+        Segment R = helper(nums, mid + 1, right);
+
+        int totalSum = L.totalSum + R.totalSum;
+        int maxLeftSum = Math.max(L.maxLeftSum, L.totalSum + R.maxLeftSum);
+        int maxRightSum = Math.max(R.maxRightSum, R.totalSum + L.maxRightSum);
+        
+        int maxSubSum = Math.max(
+            Math.max(L.maxSubSum, R.maxSubSum),
+            L.maxRightSum + R.maxLeftSum
+        );
+
+        return new Segment(totalSum, maxLeftSum, maxRightSum, maxSubSum);
+    }
+}
